@@ -6,15 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CalendarReal: View {
+    @Query private var completedDays: [CompletedDay]
+    @Query private var tasks: [TaskItem]
     @State private var currentMonth: Date = Date()
     
-    let completedDates: Set<DateComponents> = [
-        DateComponents(year: 2026, month: 8, day:7),
-        DateComponents(year: 2026, month: 8, day:8),
-        DateComponents(year: 2026, month: 8, day:10)
-    ]
+    private var streak: Int {
+        StreakCalculator.currentStreak(days: completedDays, tasks: tasks)
+    }
+    
+    private var completedDates: Set<DateComponents> {
+        Set(StreakCalculator.completedDays(completedDays).map {
+            Calendar.current.dateComponents([.year, .month, .day], from: $0)
+        })
+    }
     
     let columns = Array(repeating: GridItem(.flexible()), count:7)
     let daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
@@ -40,7 +47,7 @@ struct CalendarReal: View {
                         .frame(width: 120, height: 150)
                         .foregroundStyle(.orange)
                         .padding(7)
-                    Text("12")
+                    Text("\(streak)")
                         .font(.system(size: 50))
                         .fontWeight(.bold)
                         .foregroundStyle(.white)
@@ -194,4 +201,5 @@ struct CalendarReal: View {
         }
 #Preview {
     CalendarReal()
+        .modelContainer(for: [TaskItem.self, CompletedDay.self])
 }
