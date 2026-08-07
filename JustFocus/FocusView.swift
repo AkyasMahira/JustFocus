@@ -11,6 +11,16 @@ import SwiftData
 struct FocusView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TaskItem.dueDate) private var tasks: [TaskItem]
+    
+    private var sortedTasks: [TaskItem] {
+        tasks.sorted { task1, task2 in
+            if task1.isPinned != task2.isPinned {
+                return task1.isPinned && !task2.isPinned
+            }
+            return task1.dueDate < task2.dueDate
+        }
+    }
+    
     @State private var showAddTaskSheet = false
     
     var body: some View {
@@ -24,7 +34,7 @@ struct FocusView: View {
                     )
                 } else {
                     List {
-                        ForEach(tasks) { task in
+                        ForEach(sortedTasks) { task in
                             NavigationLink {
                                 TaskDetail(task: task)
                             } label: {
@@ -39,10 +49,16 @@ struct FocusView: View {
                             }
                             .swipeActions(edge: .leading) {
                                 Button {
-                                } label: {
-                                    Label("Pin", systemImage: "pin.fill")
+                                    withAnimation{
+                                        task.isPinned.toggle()
+                                    }
+                                }label: {
+                                    Label(
+                                        task.isPinned ? "Unpin" : "Pin",
+                                        systemImage: task.isPinned ? "pin.slash.fill" : "pin.fill"
+                                    )
                                 }
-                                .tint(.blue)
+                                .tint(task.isPinned ? .gray : .blue)
                             }
                         }
                     }

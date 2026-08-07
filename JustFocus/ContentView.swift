@@ -25,5 +25,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: TaskItem.self)
+        .modelContainer(for: TaskItem.self, inMemory: true)
 }

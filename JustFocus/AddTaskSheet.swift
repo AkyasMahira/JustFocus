@@ -21,6 +21,18 @@ struct AddTaskSheet: View {
     @State private var dueTime: Date
     @State private var note: String
     
+    @State private var isPresented = true
+    
+    private var isEdited: Bool {
+        if let editingTask {
+            return title != editingTask.title ||
+            description != editingTask.taskDescription ||
+            note != editingTask.note
+        } else {
+            return !title.isEmpty || !description.isEmpty || !note.isEmpty
+        }
+    }
+    
     init(editingTask: TaskItem? = nil) {
         self.editingTask = editingTask
         _title = State(initialValue: editingTask?.title ?? "")
@@ -53,11 +65,11 @@ struct AddTaskSheet: View {
             .navigationTitle(editingTask == nil ? "Add New Task" : "Edit Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark")
-                    }
-                }
+//                ToolbarItem(placement: .cancellationAction) {
+//                    Button { dismiss() } label: {
+//                        Image(systemName: "xmark")
+//                    }
+//                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         let combinedDate = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: dueTime), minute: Calendar.current.component(.minute, from: dueTime), second: 0, of: startDate) ?? startDate
@@ -68,7 +80,7 @@ struct AddTaskSheet: View {
                             editingTask.dueDate = combinedDate
                             editingTask.note = note
                         } else {
-                            let newTask = TaskItem(title: title, taskDescription: description, dueDate: combinedDate, note: note)
+                            let newTask = TaskItem(title: title, taskDescription: description, dueDate: combinedDate, note: note, isPinned: false)
                             modelContext.insert(newTask)
                         }
                         dismiss()
@@ -81,7 +93,16 @@ struct AddTaskSheet: View {
                     
                 }
             }
+            .discardAlert(show: $isPresented, isEdited: isEdited)
+            .onChange(of: isPresented) { _, newValue in if !newValue {
+                dismiss()
+            }
+                
+            }
         }
         .presentationDetents([.medium, .large])
     }
+}
+#Preview {
+    AddTaskSheet()
 }
