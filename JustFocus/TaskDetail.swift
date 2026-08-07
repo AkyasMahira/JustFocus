@@ -9,7 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct TaskDetail: View {
+    @Environment(\.dismiss) private var dismiss
     let task: TaskItem
+    var onCompleted: ((TaskItem) -> Void)? = nil
     @State private var showEditSheet = false
     
     var body: some View {
@@ -77,8 +79,14 @@ struct TaskDetail: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {}) {
-                    Image(systemName: "checkmark")
+                Button {
+                    task.isCompleted.toggle()
+                    if task.isCompleted {
+                        onCompleted?(task)
+                        dismiss()
+                    }
+                } label: {
+                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "checkmark")
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.orange)

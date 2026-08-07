@@ -1,6 +1,6 @@
 //
 //  DiscardAlertModifier.swift
-//  MyFriends
+//  JustFocus
 //
 //  Created by Mac on 06/08/26.
 //
@@ -23,7 +23,7 @@ struct DiscardAlertModifier: ViewModifier {
                             show = false
                         }
                     } label: {
-                        Label("X", systemImage: "x.mark")
+                        Image(systemName: "xmark")
                     }
                     .alert("Discard Changes?", isPresented: $showConfirmation) {
                         Button("Discard", role: .destructive) { show = false }

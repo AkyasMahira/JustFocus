@@ -65,11 +65,6 @@ struct AddTaskSheet: View {
             .navigationTitle(editingTask == nil ? "Add New Task" : "Edit Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-//                ToolbarItem(placement: .cancellationAction) {
-//                    Button { dismiss() } label: {
-//                        Image(systemName: "xmark")
-//                    }
-//                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         let combinedDate = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: dueTime), minute: Calendar.current.component(.minute, from: dueTime), second: 0, of: startDate) ?? startDate
@@ -94,10 +89,10 @@ struct AddTaskSheet: View {
                 }
             }
             .discardAlert(show: $isPresented, isEdited: isEdited)
-            .onChange(of: isPresented) { _, newValue in if !newValue {
-                dismiss()
-            }
-                
+            .onChange(of: isPresented) { _, newValue in
+                if !newValue {
+                    dismiss()
+                }
             }
         }
         .presentationDetents([.medium, .large])

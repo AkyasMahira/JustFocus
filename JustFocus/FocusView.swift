@@ -10,7 +10,13 @@ import SwiftData
 
 struct FocusView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \TaskItem.dueDate) private var tasks: [TaskItem]
+    @Query(sort: \TaskItem.dueDate) private var allTasks: [TaskItem]
+    @State private var showAddTaskSheet = false
+    @State private var showCongrats = false
+    
+    private var tasks: [TaskItem] {
+        allTasks.filter { !$0.isCompleted }
+    }
     
     private var sortedTasks: [TaskItem] {
         tasks.sorted { task1, task2 in
@@ -21,7 +27,13 @@ struct FocusView: View {
         }
     }
     
-    @State private var showAddTaskSheet = false
+    private func handleTaskCompleted(_ completed: TaskItem) {
+        guard Calendar.current.isDateInToday(completed.dueDate) else { return }
+        let remainingToday = allTasks.filter { !$0.isCompleted && Calendar.current.isDateInToday($0.dueDate) }
+        if remainingToday.isEmpty {
+            showCongrats = true
+        }
+    }
     
     var body: some View {
         NavigationStack {
@@ -36,7 +48,7 @@ struct FocusView: View {
                     List {
                         ForEach(sortedTasks) { task in
                             NavigationLink {
-                                TaskDetail(task: task)
+                                TaskDetail(task: task, onCompleted: handleTaskCompleted)
                             } label: {
                                 TaskCardView(task: task)
                             }
@@ -49,10 +61,10 @@ struct FocusView: View {
                             }
                             .swipeActions(edge: .leading) {
                                 Button {
-                                    withAnimation{
+                                    withAnimation {
                                         task.isPinned.toggle()
                                     }
-                                }label: {
+                                } label: {
                                     Label(
                                         task.isPinned ? "Unpin" : "Pin",
                                         systemImage: task.isPinned ? "pin.slash.fill" : "pin.fill"
@@ -77,6 +89,9 @@ struct FocusView: View {
             }
             .sheet(isPresented: $showAddTaskSheet) {
                 AddTaskSheet()
+            }
+            .fullScreenCover(isPresented: $showCongrats) {
+                CongratsScreen()
             }
         }
     }
