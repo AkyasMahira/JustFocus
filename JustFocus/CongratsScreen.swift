@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CongratsScreen: View {
     @Environment(\.dismiss) private var dismiss
+    var streak: Int
     
     var body: some View {
         NavigationStack{
@@ -28,7 +29,7 @@ struct CongratsScreen: View {
                         .foregroundStyle(.orange)
                     
                     VStack{
-                        Text("12")
+                        Text("\(streak)")
                             .font(.system(size:50))
                             .font(.largeTitle)
                             .fontWeight(.bold)
@@ -59,5 +60,5 @@ struct CongratsScreen: View {
 
 
 #Preview {
-    CongratsScreen()
+    CongratsScreen(streak: 12)
 }

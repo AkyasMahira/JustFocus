@@ -11,6 +11,7 @@ import SwiftData
 struct FocusView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TaskItem.dueDate) private var allTasks: [TaskItem]
+    @Query private var completedDays: [CompletedDay]
     @State private var showAddTaskSheet = false
     @State private var showCongrats = false
     
@@ -27,7 +28,16 @@ struct FocusView: View {
         }
     }
     
+    private func recordCompletionDay() {
+        let today = Calendar.current.startOfDay(for: .now)
+        let existing = (try? modelContext.fetch(FetchDescriptor<CompletedDay>())) ?? []
+        if !existing.contains(where: { Calendar.current.startOfDay(for: $0.date) == today }) {
+            modelContext.insert(CompletedDay(date: today))
+        }
+    }
+    
     private func handleTaskCompleted(_ completed: TaskItem) {
+        recordCompletionDay()
         guard Calendar.current.isDateInToday(completed.dueDate) else { return }
         let remainingToday = allTasks.filter { !$0.isCompleted && Calendar.current.isDateInToday($0.dueDate) }
         guard remainingToday.isEmpty else { return }
@@ -91,7 +101,7 @@ struct FocusView: View {
                 AddTaskSheet()
             }
             .fullScreenCover(isPresented: $showCongrats) {
-                CongratsScreen()
+                CongratsScreen(streak: StreakCalculator.currentStreak(days: completedDays, tasks: allTasks))
             }
         }
     }
@@ -99,5 +109,5 @@ struct FocusView: View {
 
 #Preview {
     FocusView()
-        .modelContainer(for: TaskItem.self)
+        .modelContainer(for: [TaskItem.self, CompletedDay.self])
 }
