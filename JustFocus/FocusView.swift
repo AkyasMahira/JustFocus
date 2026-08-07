@@ -61,7 +61,7 @@ struct FocusView: View {
                             }
                             .swipeActions(edge: .leading) {
                                 Button {
-                                    withAnimation {
+                                    withAnimation(.snappy(duration: 0.3)) {
                                         task.isPinned.toggle()
                                     }
                                 } label: {
@@ -75,8 +75,10 @@ struct FocusView: View {
                         }
                     }
                     .listStyle(.insetGrouped)
+                    .animation(.snappy(duration: 0.35), value: sortedTasks.map(\.id))
                 }
             }
+            .animation(.snappy(duration: 0.35), value: tasks.count)
             .navigationTitle("Focus")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

@@ -13,6 +13,13 @@ struct TaskDetail: View {
     let task: TaskItem
     var onCompleted: ((TaskItem) -> Void)? = nil
     @State private var showEditSheet = false
+    @State private var showCompleteConfirmation = false
+    
+    private func completeTask() {
+        task.isCompleted = true
+        onCompleted?(task)
+        dismiss()
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -80,13 +87,10 @@ struct TaskDetail: View {
             
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    task.isCompleted.toggle()
-                    if task.isCompleted {
-                        onCompleted?(task)
-                        dismiss()
-                    }
+                    showCompleteConfirmation = true
                 } label: {
-                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "checkmark")
+                    Image(systemName: "checkmark")
+                        .contentTransition(.symbolEffect(.replace))
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.orange)
@@ -94,6 +98,14 @@ struct TaskDetail: View {
         }
         .sheet(isPresented: $showEditSheet) {
             AddTaskSheet(editingTask: task)
+        }
+        .alert("Complete Task?", isPresented: $showCompleteConfirmation) {
+            Button("Complete", role: .destructive) {
+                completeTask()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Tandai tugas ini sebagai selesai?")
         }
     }
 }

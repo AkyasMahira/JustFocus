@@ -15,8 +15,8 @@ final class TaskItem {
     var taskDescription: String
     var dueDate: Date
     var note: String
-    var isCompleted: Bool
-    var isPinned: Bool
+    var isCompleted: Bool = false
+    var isPinned: Bool = false
     
     init(id: UUID = UUID(), title: String, taskDescription: String, dueDate: Date, note: String, isCompleted: Bool = false, isPinned: Bool = false) {
         self.id = id

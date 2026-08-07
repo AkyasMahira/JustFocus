@@ -78,6 +78,7 @@ struct AddTaskSheet: View {
                             let newTask = TaskItem(title: title, taskDescription: description, dueDate: combinedDate, note: note, isPinned: false)
                             modelContext.insert(newTask)
                         }
+                        try? modelContext.save()
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark")
