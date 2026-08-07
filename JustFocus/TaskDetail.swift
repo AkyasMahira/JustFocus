@@ -90,7 +90,6 @@ struct TaskDetail: View {
                     showCompleteConfirmation = true
                 } label: {
                     Image(systemName: "checkmark")
-                        .contentTransition(.symbolEffect(.replace))
                 }
                 .buttonStyle(.glassProminent)
                 .tint(.orange)

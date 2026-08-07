@@ -28,3 +28,7 @@ struct TaskCardView: View {
         .padding(.vertical, 4)
     }
 }
+
+#Preview {
+    TaskCardView(task: TaskItem(title: "Judul", taskDescription: "Des", dueDate: Date(), note: "Note", isCompleted: false))
+}

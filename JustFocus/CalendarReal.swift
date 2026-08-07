@@ -11,7 +11,9 @@ struct CalendarReal: View {
     @State private var currentMonth: Date = Date()
     
     let completedDates: Set<DateComponents> = [
-        DateComponents(year: 2026, month: 7, day:1)
+        DateComponents(year: 2026, month: 8, day:7),
+        DateComponents(year: 2026, month: 8, day:8),
+        DateComponents(year: 2026, month: 8, day:10)
     ]
     
     let columns = Array(repeating: GridItem(.flexible()), count:7)

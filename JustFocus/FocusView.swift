@@ -30,7 +30,8 @@ struct FocusView: View {
     private func handleTaskCompleted(_ completed: TaskItem) {
         guard Calendar.current.isDateInToday(completed.dueDate) else { return }
         let remainingToday = allTasks.filter { !$0.isCompleted && Calendar.current.isDateInToday($0.dueDate) }
-        if remainingToday.isEmpty {
+        guard remainingToday.isEmpty else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             showCongrats = true
         }
     }
@@ -61,9 +62,7 @@ struct FocusView: View {
                             }
                             .swipeActions(edge: .leading) {
                                 Button {
-                                    withAnimation(.snappy(duration: 0.3)) {
-                                        task.isPinned.toggle()
-                                    }
+                                    task.isPinned.toggle()
                                 } label: {
                                     Label(
                                         task.isPinned ? "Unpin" : "Pin",
@@ -78,7 +77,6 @@ struct FocusView: View {
                     .animation(.snappy(duration: 0.35), value: sortedTasks.map(\.id))
                 }
             }
-            .animation(.snappy(duration: 0.35), value: tasks.count)
             .navigationTitle("Focus")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -97,4 +95,9 @@ struct FocusView: View {
             }
         }
     }
+}
+
+#Preview {
+    FocusView()
+        .modelContainer(for: TaskItem.self)
 }
