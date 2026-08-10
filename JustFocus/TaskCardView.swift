@@ -30,5 +30,5 @@ struct TaskCardView: View {
 }
 
 #Preview {
-    TaskCardView(task: TaskItem(title: "Judul", taskDescription: "Des", dueDate: Date(), note: "Note", isCompleted: false))
+    TaskCardView(task: TaskItem(title: "Judul", taskDescription: "Des", startDate: Date(), dueDate: Date(), note: "Note", isCompleted: false))
 }

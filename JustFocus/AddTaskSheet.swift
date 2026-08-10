@@ -37,7 +37,7 @@ struct AddTaskSheet: View {
         self.editingTask = editingTask
         _title = State(initialValue: editingTask?.title ?? "")
         _description = State(initialValue: editingTask?.taskDescription ?? "")
-        _startDate = State(initialValue: editingTask?.dueDate ?? Date())
+        _startDate = State(initialValue: editingTask?.startDate ?? Date())
         _endDate = State(initialValue: editingTask?.dueDate ?? Date())
         _dueTime = State(initialValue: editingTask?.dueDate ?? Date())
         _note = State(initialValue: editingTask?.note ?? "")
@@ -45,7 +45,7 @@ struct AddTaskSheet: View {
     
     var body: some View {
         NavigationStack {
-            Form {
+            List {
                 Section("Tugas") {
                     TextField("Judul Tugas", text: $title)
                     TextField("Deskripsi Tugas", text: $description, axis: .vertical)
@@ -67,15 +67,16 @@ struct AddTaskSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        let combinedDate = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: dueTime), minute: Calendar.current.component(.minute, from: dueTime), second: 0, of: startDate) ?? startDate
+                        let combinedDate = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: dueTime), minute: Calendar.current.component(.minute, from: dueTime), second: 0, of: endDate) ?? endDate
                         
                         if let editingTask {
                             editingTask.title = title
                             editingTask.taskDescription = description
+                            editingTask.startDate = startDate
                             editingTask.dueDate = combinedDate
                             editingTask.note = note
                         } else {
-                            let newTask = TaskItem(title: title, taskDescription: description, dueDate: combinedDate, note: note, isPinned: false)
+                            let newTask = TaskItem(title: title, taskDescription: description, startDate: startDate, dueDate: combinedDate, note: note, isPinned: false)
                             modelContext.insert(newTask)
                         }
                         try? modelContext.save()

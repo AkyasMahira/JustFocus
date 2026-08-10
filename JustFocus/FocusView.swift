@@ -16,7 +16,7 @@ struct FocusView: View {
     @State private var showCongrats = false
     
     private var tasks: [TaskItem] {
-        allTasks.filter { !$0.isCompleted }
+        allTasks.filter { !$0.isCompleted && Calendar.current.isDateInToday($0.startDate) }
     }
     
     private var sortedTasks: [TaskItem] {
@@ -28,18 +28,21 @@ struct FocusView: View {
         }
     }
     
+    // guard untuk menghindari duplikasi data (10 task selesai hari ini ttp dihitung 1)
     private func recordCompletionDay() {
         let today = Calendar.current.startOfDay(for: .now)
         let existing = (try? modelContext.fetch(FetchDescriptor<CompletedDay>())) ?? []
         if !existing.contains(where: { Calendar.current.startOfDay(for: $0.date) == today }) {
             modelContext.insert(CompletedDay(date: today))
+            try? modelContext.save()
         }
     }
     
+    // ke triger pas button selesai dipencet (check untuk menampilmkan congrats screen)
     private func handleTaskCompleted(_ completed: TaskItem) {
         recordCompletionDay()
-        guard Calendar.current.isDateInToday(completed.dueDate) else { return }
-        let remainingToday = allTasks.filter { !$0.isCompleted && Calendar.current.isDateInToday($0.dueDate) }
+        guard Calendar.current.isDateInToday(completed.startDate) else { return }
+        let remainingToday = allTasks.filter { !$0.isCompleted && Calendar.current.isDateInToday($0.startDate) }
         guard remainingToday.isEmpty else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             showCongrats = true
