@@ -12,8 +12,10 @@ enum StreakCalculator {
         Set(days.map { Calendar.current.startOfDay(for: $0.date) })
     }
     
+    // freeze
     static func currentStreak(days: [CompletedDay], tasks: [TaskItem]) -> Int {
-        let hasOverdue = tasks.contains { !$0.isCompleted && $0.dueDate < Date() }
+        let startOfToday = Calendar.current.startOfDay(for: .now)
+        let hasOverdue = tasks.contains { !$0.isCompleted && $0.dueDate < startOfToday }
         if hasOverdue {
             return 0
         }

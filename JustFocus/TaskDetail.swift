@@ -36,6 +36,21 @@ struct TaskDetail: View {
             VStack(alignment: .leading, spacing: 16) {
                 
                 HStack(alignment: .center, spacing: 12) {
+                    Image(systemName: "play.circle")
+                        .font(.title3)
+                        .foregroundStyle(.brown)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Mulai")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Text(task.startDate, format: .dateTime.day().month().year())
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                    }
+                }
+                
+                HStack(alignment: .center, spacing: 12) {
                     Image(systemName: "calendar")
                         .font(.title3)
                         .foregroundStyle(.brown)
@@ -111,7 +126,7 @@ struct TaskDetail: View {
 
 #Preview {
     NavigationStack {
-        TaskDetail(task: TaskItem(title: "Judul Tugas", taskDescription: "Lorem ipsum", dueDate: Date(), note: "Catatan"))
+        TaskDetail(task: TaskItem(title: "Judul Tugas", taskDescription: "Lorem ipsum", startDate: Date(), dueDate: Date(), note: "Catatan"))
     }
     .modelContainer(for: TaskItem.self)
 }
