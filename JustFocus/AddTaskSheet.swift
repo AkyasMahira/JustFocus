@@ -45,7 +45,7 @@ struct AddTaskSheet: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            Form {
                 Section("Tugas") {
                     TextField("Judul Tugas", text: $title)
                     TextField("Deskripsi Tugas", text: $description, axis: .vertical)
